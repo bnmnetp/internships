@@ -1,4 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template, request, session
+from flask_wtf import Form
+import flask_wtf
+from wtforms.ext.sqlalchemy.orm import model_form
 from flask.ext.sqlalchemy import SQLAlchemy
 import os.path
 
@@ -53,6 +56,15 @@ class Internship(db.Model):
 def initdb():
     db.create_all()
     return os.path.abspath(os.path.dirname(__file__))
+
+@app.route('/newcompany', methods=('POST','GET'))
+def newcompany():
+    MyForm = model_form(Company,flask_wtf.Form)
+    form = MyForm()
+    if form.validate_on_submit():
+        return "success"
+    else:
+        return render_template('newcompany.html',form=form)
     
 if __name__ == '__main__':
     app.run()

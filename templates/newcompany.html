@@ -1,0 +1,9 @@
+
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    {{ form.name.label }} {{ form.name(size=20) }} <br />
+    {{ form.addr_number.label }} {{ form.addr_number(size=20) }}
+    {{ form.street.label }} {{ form.street(size=20) }} <br />
+    {{ form.city.label }} {{ form.city(size=20) }}    
+    <input type="submit" value="Go">
+</form>

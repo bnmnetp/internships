@@ -1,14 +1,22 @@
 {% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-<form method="POST" action="">
+<h2>Add a New Company</h2>
+<form method="POST" action="" class="form-horizontal">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
         {% if field.name not in ['students']: %}
-            {{field.label}}
-            {{field(class=field.name)}} <br />
+            <div class="form-group" >
+            {{field.label(class="control-label col-xs-2")}}
+                <div class="col-sm-4">
+                {{field(class="form-control")}}
+                </div>
+            </div>
         {% endif %}
     {% endfor %}
-    <input type="Submit" value="Create New">
+    <div class="col-xs-offset-2 col-xs-10">
+    <input type="Submit" value="Create New" class="btn btn-primary">
+    </div>
 </form>
 {% endblock %}

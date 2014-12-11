@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session
 from flask_wtf import Form
 import flask_wtf
-from wtforms.fields import HiddenField
+from wtforms.widgets import HiddenInput
 from wtforms.ext.sqlalchemy.orm import model_form
 from flask.ext.sqlalchemy import SQLAlchemy
 import os.path
@@ -66,7 +66,8 @@ def initdb():
 def newcompany():
     MyForm = model_form(Company,base_class=Form,
                  db_session=db.session,
-                 #field_args={'longitude': {'widget': 'hidden'}}
+                 field_args={'longitude': {'widget': HiddenInput()},
+                             'latitude': {'widget': HiddenInput()}}
                  )
     form = MyForm()
     if form.validate_on_submit():

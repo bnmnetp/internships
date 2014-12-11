@@ -1,7 +1,7 @@
 <form method="POST" action="">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
-        {% if field.name not in ['longitude', 'latitude', 'students']: %}
+        {% if field.name not in ['students']: %}
             {{field.label}}
             {{field(class=field.name)}} <br />
         {% endif %}

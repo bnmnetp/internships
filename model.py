@@ -5,12 +5,14 @@ from wtforms.widgets import HiddenInput
 from wtforms.ext.sqlalchemy.orm import model_form
 from flask.ext.sqlalchemy import SQLAlchemy
 import os.path
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = 'luthercollege'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{0}/test.db'.format(os.path.abspath(os.path.dirname(__file__)))
 db = SQLAlchemy(app)
+Bootstrap(app)
 
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)

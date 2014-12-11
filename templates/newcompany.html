@@ -1,3 +1,6 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
 <form method="POST" action="">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
@@ -6,4 +9,6 @@
             {{field(class=field.name)}} <br />
         {% endif %}
     {% endfor %}
+    <input type="Submit" value="Create New">
 </form>
+{% endblock %}

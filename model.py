@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, session
 from flask_wtf import Form
 import flask_wtf
+from wtforms.fields import HiddenField
 from wtforms.ext.sqlalchemy.orm import model_form
 from flask.ext.sqlalchemy import SQLAlchemy
 import os.path
 
 app = Flask(__name__)
 app.debug = True
+app.secret_key = 'luthercollege'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{0}/test.db'.format(os.path.abspath(os.path.dirname(__file__)))
 db = SQLAlchemy(app)
 
@@ -31,11 +33,13 @@ class Company(db.Model):
     addr_number = db.Column(db.Integer)
     street = db.Column(db.String)
     city = db.Column(db.String)
-    db.latitude = db.Column(db.Float)
-    db.longitude = db.Column(db.Float)
-    students = db.relationship('Internship',backref='course')
+    state = db.Column(db.String)
+    zipcode = db.Column(db.Integer)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    students = db.relationship('Internship',backref='company')
     
-    def __init__(self,name):
+    def __init__(self,name='test'):
         self.name = name
 
 class Internship(db.Model):
@@ -54,43 +58,28 @@ class Internship(db.Model):
     
 @app.route('/initdb')
 def initdb():
+    db.drop_all()
     db.create_all()
     return os.path.abspath(os.path.dirname(__file__))
 
 @app.route('/newcompany', methods=('POST','GET'))
 def newcompany():
-    MyForm = model_form(Company,flask_wtf.Form)
+    MyForm = model_form(Company,base_class=Form,
+                 db_session=db.session,
+                 #field_args={'longitude': {'widget': 'hidden'}}
+                 )
     form = MyForm()
     if form.validate_on_submit():
+        c = Company()
+        form.populate_obj(c)
+        # todo: obtain latitude longitude information
+        # see: geolocation-python 0.1.3
+        db.session.add(c)
+        db.session.commit()
         return "success"
     else:
         return render_template('newcompany.html',form=form)
     
 if __name__ == '__main__':
     app.run()
-    
-# conn = sqlite3.connect("internapp.db")
-#
-# curs = conn.cursor()
-#
-# curs.execute('''drop table student''')
-# curs.execute('''create table student (
-#                 student_id int primary key,
-#                 grad_year int,
-#                 first_name text,
-#                 last_name text,
-#                 major text,
-#                 luther_user text );''' )
-#
-# curs.execute('''insert into student values (123,1986,'brad','miller','CS','millbr02')''')
-# curs.execute('''insert into student values (456,2012,'jane','miller','CS','millja03')''')
-# curs.execute('''insert into student values (789,2015,'john','smith','MUS','smitjo12')''')
-# curs.execute('''insert into student values (321,2014,'libby','larson','CS','larsli02')''')
-# curs.execute('''insert into student values (654,2000,'arsene','wenger','PE','wengar01')''')
-# conn.commit()
-#
-#
-# rows = curs.execute('''select first_name,grad_year from student where major='CS' or major='PE' order by grad_year desc''')
-#
-# for row in rows:
-#     print(row)
+

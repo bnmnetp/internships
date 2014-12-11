@@ -1,9 +1,9 @@
-
 <form method="POST" action="">
-    {{ form.csrf_token }}
-    {{ form.name.label }} {{ form.name(size=20) }} <br />
-    {{ form.addr_number.label }} {{ form.addr_number(size=20) }}
-    {{ form.street.label }} {{ form.street(size=20) }} <br />
-    {{ form.city.label }} {{ form.city(size=20) }}    
-    <input type="submit" value="Go">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {% if field.name not in ['longitude', 'latitude', 'students']: %}
+            {{field.label}}
+            {{field(class=field.name)}} <br />
+        {% endif %}
+    {% endfor %}
 </form>

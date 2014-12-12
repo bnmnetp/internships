@@ -20,12 +20,15 @@ class Student(db.Model):
     first_name = db.Column(db.String)
     last_name =  db.Column(db.String)
     
-    def __init__(self,student_id, grad_year, fname, lname):
+    def __init__(self,grad_year=None, fname=None, lname=None):
         """docstring for __init__"""
-        self.student_id = student_id
         self.grad_year = grad_year
         self.first_name = fname
         self.last_name = lname
+
+    def __repr__(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+
 
 
 
@@ -43,6 +46,10 @@ class Company(db.Model):
     
     def __init__(self,name='test'):
         self.name = name
+
+    def __repr__(self):
+        return "{0} {1}".format(self.name, self.city)
+
 
 class Internship(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -82,7 +89,38 @@ def newcompany():
         return "success"
     else:
         return render_template('newcompany.html',form=form)
-    
+
+
+@app.route('/newstudent', methods=('POST','GET'))
+def newstudent():
+    MyForm = model_form(Student,base_class=Form,
+                 db_session=db.session
+                 )
+    form = MyForm()
+    if form.validate_on_submit():
+        c = Student()
+        form.populate_obj(c)
+        db.session.add(c)
+        db.session.commit()
+        return "success"
+    else:
+        return render_template('newstudent.html',form=form)
+
+@app.route('/newintern', methods=('POST','GET'))
+def newintern():
+    MyForm = model_form(Internship,base_class=Form,
+                 db_session=db.session
+                 )
+    form = MyForm()
+    if form.validate_on_submit():
+        c = Internship()
+        form.populate_obj(c)
+        db.session.add(c)
+        db.session.commit()
+        return "success"
+    else:
+        return render_template('newstudent.html',form=form)
+
 if __name__ == '__main__':
     app.run()
 
